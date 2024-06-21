@@ -16,11 +16,11 @@ app.use(
 );
 app.use(express.json());
 
-// const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.mpbhh2q.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
-// console.log(uri);
-
-const uri = "mongodb://localhost:27017";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.mpbhh2q.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 console.log(uri);
+
+// const uri = "mongodb://localhost:27017";
+// console.log(uri);
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -114,6 +114,19 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await userCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // patch user data
+    app.patch("/user", async (req, res) => {
+      const loginUser = req.body;
+      const filter = { email: loginUser.email };
+      const updatedDoc = {
+        $set: {
+          lastLogin: loginUser.lastLogin,
+        },
+      };
+      const result = await userCollection.updateOne(filter, updatedDoc);
       res.send(result);
     });
 
