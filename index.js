@@ -34,17 +34,18 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    // await client.connect();
+    await client.connect();
 
     const coffeeCollection = client.db("coffeeDB").collection("coffee");
+    const userCollection = client.db("userDB").collection("user");
 
-    // get/read all data
+    // get/read coffee all data
     app.get("/coffee", async (req, res) => {
       const cursor = coffeeCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     });
-    // post data
+    // post coffee data
 
     app.post("/coffee", async (req, res) => {
       const newCoffee = req.body;
@@ -53,7 +54,7 @@ async function run() {
       res.send(result);
     });
 
-    // update Coffee
+    // update coffee Coffee
 
     app.get("/coffee/:id", async (req, res) => {
       const id = req.params.id;
@@ -81,12 +82,38 @@ async function run() {
       res.send(result);
     });
 
-    // delete
+    // delete coffee
 
     app.delete("/coffee/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await coffeeCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // read/get all user data
+
+    app.get("/user", async (req, res) => {
+      const cursor = userCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    // post user data
+
+    app.post("/user", async (req, res) => {
+      const newUser = req.body;
+      console.log(newUser);
+      const result = await userCollection.insertOne(newUser);
+      res.send(result);
+    });
+
+    // delete user data
+
+    app.delete("/user/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await userCollection.deleteOne(query);
       res.send(result);
     });
 
